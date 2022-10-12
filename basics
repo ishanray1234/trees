@@ -1,0 +1,187 @@
+//height
+#include <stdio.h>
+#include<stdlib.h>
+
+typedef struct node{
+    int data;
+    struct node* left;
+    struct node* right;
+}Node;
+
+Node *newnode(int num)
+{
+    Node *temp=(Node *)malloc(sizeof(Node));
+    temp->data=num;
+    temp->left=NULL;
+    temp->right=NULL;
+    
+    return temp;
+}
+
+int height(Node *root)
+{
+    if(root==NULL)
+        return 0;
+        
+    int l=height(root->left);
+    int r=height(root->right);
+    
+    if(l>r)
+        return l+1;
+    else
+        return r+1;
+}
+int main()
+{
+    Node* root = newnode(1);
+ 
+    root->left = newnode(2);
+    root->right = newnode(3);
+    root->left->left = newnode(4);
+    root->left->right = newnode(5);
+ 
+    printf("Height of tree is %d", height(root)-1);
+ 
+
+    return 0;
+}
+
+//symmetric
+bool isMirror(Node* root1, Node* root2)
+{
+    // If both trees are empty, then they are mirror images
+    if (root1 == NULL && root2 == NULL)
+        return true;
+ 
+    // For two trees to be mirror images, the following
+    // three conditions must be true
+    // 1.) Their root node's key must be same
+    // 2.) left subtree of left tree and right subtree of
+    // right tree have to be mirror images
+    // 3.) right subtree of left tree and left subtree of
+    // right tree have to be mirror images
+    if (root1 && root2 && root1->key == root2->key)
+        return isMirror(root1->left, root2->right)
+               && isMirror(root1->right, root2->left);
+ 
+    // if none of above conditions is true then root1
+    // and root2 are not mirror images
+    return false;
+}
+
+//convert to mirror
+void mirror(struct Node* node) 
+{
+    if (node == NULL) 
+        return; 
+    else
+    {
+        struct Node* temp;
+          
+        /* do the subtrees */
+        mirror(node->left);
+        mirror(node->right);
+      
+        /* swap the pointers in this node */
+        temp     = node->left;
+        node->left = node->right;
+        node->right = temp;
+    }
+} 
+
+//diameter
+int diameter(struct node* tree)
+{
+    // base case where tree is empty
+    if (tree == NULL)
+        return 0;
+ 
+    // get the height of left and right sub-trees
+    int lheight = height(tree->left);
+    int rheight = height(tree->right);
+ 
+    // get the diameter of left and right sub-trees
+    int ldiameter = diameter(tree->left);
+    int rdiameter = diameter(tree->right);
+ 
+    // Return max of following three
+    // 1) Diameter of left subtree
+    // 2) Diameter of right subtree
+    // 3) Height of left subtree + height of right subtree +
+    // 1
+ 
+    return max(lheight + rheight + 1,
+               max(ldiameter, rdiameter));
+}
+
+//balanced
+bool isBalanced(struct node* root)
+{
+    /* for height of left subtree */
+    int lh;
+ 
+    /* for height of right subtree */
+    int rh;
+ 
+    /* If tree is empty then return true */
+    if (root == NULL)
+        return 1;
+ 
+    /* Get the height of left and right sub trees */
+    lh = height(root->left);
+    rh = height(root->right);
+ 
+    if (abs(lh - rh) <= 1 && isBalanced(root->left)
+        && isBalanced(root->right))
+        return 1;
+ 
+    /* If we reach here then tree is not height-balanced */
+    return 0;
+}
+
+/* Returns true if a binary tree is a binary search tree */
+int isBST(struct node* node)
+{
+	if (node == NULL)
+		return 1;
+
+	/* false if the max of the left is > than us */
+	if (node->left != NULL
+		&& maxValue(node->left) > node->data)
+		return 0;
+
+	/* false if the min of the right is <= than us */
+	if (node->right != NULL
+		&& minValue(node->right) < node->data)
+		return 0;
+
+	/* false if, recursively, the left or right is not a BST
+	*/
+	if (!isBST(node->left) || !isBST(node->right))
+		return 0;
+
+	/* passing all that, it's a BST */
+	return 1;
+}
+
+* A function that constructs Balanced Binary Search Tree from a sorted array */
+struct TNode* sortedArrayToBST(int arr[], int start, int end)
+{
+    /* Base Case */
+    if (start > end)
+      return NULL;
+ 
+    /* Get the middle element and make it root */
+    int mid = (start + end)/2;
+    struct TNode *root = newNode(arr[mid]);
+ 
+    /* Recursively construct the left subtree and make it
+       left child of root */
+    root->left =  sortedArrayToBST(arr, start, mid-1);
+ 
+    /* Recursively construct the right subtree and make it
+       right child of root */
+    root->right = sortedArrayToBST(arr, mid+1, end);
+ 
+    return root;
+}
